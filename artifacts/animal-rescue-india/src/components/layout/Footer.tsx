@@ -10,7 +10,7 @@ export function Footer() {
             <div className="flex items-center gap-2 mb-6">
               <Heart className="h-8 w-8 text-primary" fill="currentColor" />
               <span className="font-display font-bold text-2xl tracking-tight">
-                Animal Rescue <span className="text-primary">India</span>
+                Aditi's <span className="text-primary">Little Paws</span>
               </span>
             </div>
             <p className="text-muted-foreground mb-6">
