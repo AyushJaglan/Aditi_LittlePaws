@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Animal Rescue India"
+version = "1.0.0"
+id = "artifacts/animal-rescue-india"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 21737
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/animal-rescue-india run dev"
+
+[services.env]
+PORT = "21737"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/animal-rescue-india", "run", "build"]
+publicDir = "artifacts/animal-rescue-india/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

@@ -1,22 +1,36 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Animal Rescue India API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: reports
+    description: Animal injury reports
+  - name: cases
+    description: Rescue cases
+  - name: adoptions
+    description: Animal adoptions
+  - name: animals
+    description: Animals available for adoption
+  - name: marketplace
+    description: Pet essentials marketplace
+  - name: volunteers
+    description: Volunteer management
+  - name: vets
+    description: Veterinary doctors and hospitals
+  - name: stats
+    description: Platform statistics
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +38,547 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /reports:
+    get:
+      operationId: getReports
+      tags: [reports]
+      summary: Get all injury reports
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: district
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: severity
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reports:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Report"
+                  total:
+                    type: number
+                required: [reports, total]
+    post:
+      operationId: createReport
+      tags: [reports]
+      summary: Submit a new injury report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReportRequest"
+      responses:
+        "201":
+          description: Report created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+
+  /reports/{id}:
+    get:
+      operationId: getReport
+      tags: [reports]
+      summary: Get a specific report
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Report details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+    patch:
+      operationId: updateReport
+      tags: [reports]
+      summary: Update a report status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateReportRequest"
+      responses:
+        "200":
+          description: Updated report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+
+  /cases:
+    get:
+      operationId: getCases
+      tags: [cases]
+      summary: Get all rescue cases
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: district
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List of cases
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cases:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Case"
+                  total:
+                    type: number
+                required: [cases, total]
+
+  /cases/{id}:
+    get:
+      operationId: getCase
+      tags: [cases]
+      summary: Get a specific case
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Case details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+    patch:
+      operationId: updateCase
+      tags: [cases]
+      summary: Update case status/treatment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCaseRequest"
+      responses:
+        "200":
+          description: Updated case
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+
+  /animals:
+    get:
+      operationId: getAnimals
+      tags: [animals]
+      summary: Get animals available for adoption
+      parameters:
+        - name: species
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: gender
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List of animals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  animals:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Animal"
+                  total:
+                    type: number
+                required: [animals, total]
+    post:
+      operationId: createAnimal
+      tags: [animals]
+      summary: Add animal for adoption
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAnimalRequest"
+      responses:
+        "201":
+          description: Animal created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Animal"
+
+  /animals/{id}:
+    get:
+      operationId: getAnimal
+      tags: [animals]
+      summary: Get specific animal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Animal details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Animal"
+
+  /adoptions:
+    get:
+      operationId: getAdoptions
+      tags: [adoptions]
+      summary: Get adoption applications
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of adoptions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  adoptions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Adoption"
+                  total:
+                    type: number
+                required: [adoptions, total]
+    post:
+      operationId: createAdoption
+      tags: [adoptions]
+      summary: Apply for adoption
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAdoptionRequest"
+      responses:
+        "201":
+          description: Application submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Adoption"
+
+  /adoptions/{id}:
+    patch:
+      operationId: updateAdoption
+      tags: [adoptions]
+      summary: Update adoption status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAdoptionRequest"
+      responses:
+        "200":
+          description: Updated adoption
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Adoption"
+
+  /products:
+    get:
+      operationId: getProducts
+      tags: [marketplace]
+      summary: Get marketplace products
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: offset
+          in: query
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+                  total:
+                    type: number
+                required: [products, total]
+    post:
+      operationId: createProduct
+      tags: [marketplace]
+      summary: Add a product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductRequest"
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /volunteers:
+    get:
+      operationId: getVolunteers
+      tags: [volunteers]
+      summary: Get registered volunteers
+      parameters:
+        - name: district
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of volunteers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  volunteers:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Volunteer"
+                  total:
+                    type: number
+                required: [volunteers, total]
+    post:
+      operationId: registerVolunteer
+      tags: [volunteers]
+      summary: Register as volunteer/NGO
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVolunteerRequest"
+      responses:
+        "201":
+          description: Volunteer registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Volunteer"
+
+  /vets:
+    get:
+      operationId: getVets
+      tags: [vets]
+      summary: Get veterinary doctors
+      parameters:
+        - name: district
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of vets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  vets:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Vet"
+                  total:
+                    type: number
+                required: [vets, total]
+    post:
+      operationId: createVet
+      tags: [vets]
+      summary: Add a veterinarian
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVetRequest"
+      responses:
+        "201":
+          description: Vet added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Vet"
+
+  /hospitals:
+    get:
+      operationId: getHospitals
+      tags: [vets]
+      summary: Get veterinary hospitals
+      parameters:
+        - name: district
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of hospitals
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hospitals:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Hospital"
+                  total:
+                    type: number
+                required: [hospitals, total]
+    post:
+      operationId: createHospital
+      tags: [vets]
+      summary: Add a hospital
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateHospitalRequest"
+      responses:
+        "201":
+          description: Hospital added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hospital"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get platform statistics
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformStats"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +586,819 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    Report:
+      type: object
+      properties:
+        id:
+          type: number
+        caseId:
+          type: string
+        reporterName:
+          type: string
+        reporterPhone:
+          type: string
+        reporterEmail:
+          type: string
+        animalType:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        locationAddress:
+          type: string
+        district:
+          type: string
+        state:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        status:
+          type: string
+        assignedVetId:
+          type: number
+          nullable: true
+        assignedHospitalId:
+          type: number
+          nullable: true
+        treatmentNotes:
+          type: string
+          nullable: true
+        recoveryPhotoUrl:
+          type: string
+          nullable: true
+        medicalReport:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - caseId
+        - reporterName
+        - reporterPhone
+        - reporterEmail
+        - animalType
+        - description
+        - severity
+        - latitude
+        - longitude
+        - locationAddress
+        - district
+        - state
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateReportRequest:
+      type: object
+      properties:
+        reporterName:
+          type: string
+        reporterPhone:
+          type: string
+        reporterEmail:
+          type: string
+        animalType:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        locationAddress:
+          type: string
+        district:
+          type: string
+        state:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+      required:
+        - reporterName
+        - reporterPhone
+        - reporterEmail
+        - animalType
+        - description
+        - severity
+        - latitude
+        - longitude
+        - locationAddress
+        - district
+        - state
+
+    UpdateReportRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        assignedVetId:
+          type: number
+          nullable: true
+        assignedHospitalId:
+          type: number
+          nullable: true
+        treatmentNotes:
+          type: string
+          nullable: true
+        recoveryPhotoUrl:
+          type: string
+          nullable: true
+        medicalReport:
+          type: string
+          nullable: true
+
+    Case:
+      type: object
+      properties:
+        id:
+          type: number
+        caseId:
+          type: string
+        animalType:
+          type: string
+        description:
+          type: string
+        severity:
+          type: string
+        status:
+          type: string
+        district:
+          type: string
+        state:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        locationAddress:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        rescueTime:
+          type: string
+          nullable: true
+        firstAid:
+          type: string
+          nullable: true
+        vetName:
+          type: string
+          nullable: true
+        vetPhone:
+          type: string
+          nullable: true
+        hospitalName:
+          type: string
+          nullable: true
+        treatmentUpdates:
+          type: string
+          nullable: true
+        recoveryProgress:
+          type: string
+          nullable: true
+        recoveryPhotoUrl:
+          type: string
+          nullable: true
+        medicalReport:
+          type: string
+          nullable: true
+        releaseDetails:
+          type: string
+          nullable: true
+        reportId:
+          type: number
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - caseId
+        - animalType
+        - description
+        - severity
+        - status
+        - district
+        - state
+        - latitude
+        - longitude
+        - locationAddress
+        - reportId
+        - createdAt
+        - updatedAt
+
+    UpdateCaseRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        rescueTime:
+          type: string
+          nullable: true
+        firstAid:
+          type: string
+          nullable: true
+        vetName:
+          type: string
+          nullable: true
+        vetPhone:
+          type: string
+          nullable: true
+        hospitalName:
+          type: string
+          nullable: true
+        treatmentUpdates:
+          type: string
+          nullable: true
+        recoveryProgress:
+          type: string
+          nullable: true
+        recoveryPhotoUrl:
+          type: string
+          nullable: true
+        medicalReport:
+          type: string
+          nullable: true
+        releaseDetails:
+          type: string
+          nullable: true
+
+    Animal:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        species:
+          type: string
+        breed:
+          type: string
+          nullable: true
+        age:
+          type: string
+        gender:
+          type: string
+        color:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        vaccinationStatus:
+          type: string
+        medicalHistory:
+          type: string
+          nullable: true
+        temperament:
+          type: string
+          nullable: true
+        rescueStory:
+          type: string
+          nullable: true
+        shelterName:
+          type: string
+        shelterDistrict:
+          type: string
+        shelterState:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        additionalPhotos:
+          type: string
+          nullable: true
+        status:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - species
+        - age
+        - gender
+        - vaccinationStatus
+        - shelterName
+        - shelterDistrict
+        - shelterState
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateAnimalRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        species:
+          type: string
+        breed:
+          type: string
+          nullable: true
+        age:
+          type: string
+        gender:
+          type: string
+        color:
+          type: string
+          nullable: true
+        weight:
+          type: string
+          nullable: true
+        vaccinationStatus:
+          type: string
+        medicalHistory:
+          type: string
+          nullable: true
+        temperament:
+          type: string
+          nullable: true
+        rescueStory:
+          type: string
+          nullable: true
+        shelterName:
+          type: string
+        shelterDistrict:
+          type: string
+        shelterState:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+      required:
+        - name
+        - species
+        - age
+        - gender
+        - vaccinationStatus
+        - shelterName
+        - shelterDistrict
+        - shelterState
+
+    Adoption:
+      type: object
+      properties:
+        id:
+          type: number
+        animalId:
+          type: number
+        applicantName:
+          type: string
+        applicantEmail:
+          type: string
+        applicantPhone:
+          type: string
+        applicantAddress:
+          type: string
+        applicantDistrict:
+          type: string
+        applicantState:
+          type: string
+        housingType:
+          type: string
+        hasOtherPets:
+          type: boolean
+        hasChildren:
+          type: boolean
+        reasonForAdoption:
+          type: string
+        experience:
+          type: string
+          nullable: true
+        status:
+          type: string
+        animalName:
+          type: string
+          nullable: true
+        animalSpecies:
+          type: string
+          nullable: true
+        animalPhotoUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - animalId
+        - applicantName
+        - applicantEmail
+        - applicantPhone
+        - applicantAddress
+        - applicantDistrict
+        - applicantState
+        - housingType
+        - hasOtherPets
+        - hasChildren
+        - reasonForAdoption
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateAdoptionRequest:
+      type: object
+      properties:
+        animalId:
+          type: number
+        applicantName:
+          type: string
+        applicantEmail:
+          type: string
+        applicantPhone:
+          type: string
+        applicantAddress:
+          type: string
+        applicantDistrict:
+          type: string
+        applicantState:
+          type: string
+        housingType:
+          type: string
+        hasOtherPets:
+          type: boolean
+        hasChildren:
+          type: boolean
+        reasonForAdoption:
+          type: string
+        experience:
+          type: string
+          nullable: true
+      required:
+        - animalId
+        - applicantName
+        - applicantEmail
+        - applicantPhone
+        - applicantAddress
+        - applicantDistrict
+        - applicantState
+        - housingType
+        - hasOtherPets
+        - hasChildren
+        - reasonForAdoption
+
+    UpdateAdoptionRequest:
+      type: object
+      properties:
+        status:
+          type: string
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        originalPrice:
+          type: number
+          nullable: true
+        brand:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        rating:
+          type: number
+          nullable: true
+        reviewCount:
+          type: number
+          nullable: true
+        inStock:
+          type: boolean
+        isFeatured:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - category
+        - price
+        - inStock
+        - isFeatured
+        - createdAt
+
+    CreateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        originalPrice:
+          type: number
+          nullable: true
+        brand:
+          type: string
+          nullable: true
+        imageUrl:
+          type: string
+          nullable: true
+        inStock:
+          type: boolean
+        isFeatured:
+          type: boolean
+      required:
+        - name
+        - description
+        - category
+        - price
+        - inStock
+        - isFeatured
+
+    Volunteer:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        type:
+          type: string
+        organizationName:
+          type: string
+          nullable: true
+        district:
+          type: string
+        state:
+          type: string
+        skills:
+          type: string
+          nullable: true
+        availability:
+          type: string
+          nullable: true
+        vehicleAvailable:
+          type: boolean
+        status:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - phone
+        - type
+        - district
+        - state
+        - vehicleAvailable
+        - status
+        - createdAt
+
+    CreateVolunteerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        type:
+          type: string
+        organizationName:
+          type: string
+          nullable: true
+        district:
+          type: string
+        state:
+          type: string
+        skills:
+          type: string
+          nullable: true
+        availability:
+          type: string
+          nullable: true
+        vehicleAvailable:
+          type: boolean
+      required:
+        - name
+        - email
+        - phone
+        - type
+        - district
+        - state
+        - vehicleAvailable
+
+    Vet:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        specialization:
+          type: string
+          nullable: true
+        registrationNumber:
+          type: string
+        hospitalId:
+          type: number
+          nullable: true
+        hospitalName:
+          type: string
+          nullable: true
+        district:
+          type: string
+        state:
+          type: string
+        isAvailable:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - phone
+        - registrationNumber
+        - district
+        - state
+        - isAvailable
+        - createdAt
+
+    CreateVetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        specialization:
+          type: string
+          nullable: true
+        registrationNumber:
+          type: string
+        hospitalId:
+          type: number
+          nullable: true
+        district:
+          type: string
+        state:
+          type: string
+        isAvailable:
+          type: boolean
+      required:
+        - name
+        - email
+        - phone
+        - registrationNumber
+        - district
+        - state
+        - isAvailable
+
+    Hospital:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        address:
+          type: string
+        district:
+          type: string
+        state:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        totalBeds:
+          type: number
+          nullable: true
+        availableBeds:
+          type: number
+          nullable: true
+        isGovernment:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - address
+        - district
+        - state
+        - phone
+        - isGovernment
+        - createdAt
+
+    CreateHospitalRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        district:
+          type: string
+        state:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          nullable: true
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        totalBeds:
+          type: number
+          nullable: true
+        availableBeds:
+          type: number
+          nullable: true
+        isGovernment:
+          type: boolean
+      required:
+        - name
+        - address
+        - district
+        - state
+        - phone
+        - isGovernment
+
+    PlatformStats:
+      type: object
+      properties:
+        totalReports:
+          type: number
+        activeRescues:
+          type: number
+        animalsRescued:
+          type: number
+        animalsAdopted:
+          type: number
+        registeredVets:
+          type: number
+        registeredHospitals:
+          type: number
+        registeredVolunteers:
+          type: number
+        statesCovered:
+          type: number
+        districtsCovered:
+          type: number
+      required:
+        - totalReports
+        - activeRescues
+        - animalsRescued
+        - animalsAdopted
+        - registeredVets
+        - registeredHospitals
+        - registeredVolunteers
+        - statesCovered
+        - districtsCovered

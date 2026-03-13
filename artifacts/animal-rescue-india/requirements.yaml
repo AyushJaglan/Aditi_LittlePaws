@@ -1,0 +1,24 @@
+packages:
+  "framer-motion": "For page transitions and smooth UI animations"
+  "react-hook-form": "For robust form state management and validation"
+  "@hookform/resolvers": "To integrate Zod with react-hook-form"
+  "zod": "For form schema validation"
+  "date-fns": "For formatting timestamps"
+  "leaflet": "For map rendering (optional dependency for actual maps, using basic UI if omitted)"
+  "react-leaflet": "React wrapper for Leaflet"
+
+images:
+  - path: "artifacts/animal-rescue-india/public/images/hero-dogs.png"
+    description: "A heartwarming, high-quality photo of a happy rescued dog and cat looking at the camera with warm sunlight, earthy green and soft orange tones, emotional and hopeful."
+    aspect_ratio: "16:9"
+  - path: "artifacts/animal-rescue-india/public/images/about-mission.png"
+    description: "Volunteers in green vests treating an injured street dog in India, compassionate, professional, documentary style."
+    aspect_ratio: "4:3"
+  - path: "artifacts/animal-rescue-india/public/images/logo-icon.png"
+    description: "A minimal, modern logo icon featuring a paw print integrated with a leaf or cross symbol, in earthy green and vibrant orange on a transparent background."
+    aspect_ratio: "1:1"
+
+notes:
+  - UI relies on standard Shadcn UI components located in src/components/ui
+  - API hooks are imported from @workspace/api-client-react
+  - Map implementation uses basic grid/list fallback if leaflet isn't fully configured, but UI accommodates it.
